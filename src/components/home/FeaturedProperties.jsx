@@ -78,7 +78,7 @@ export default function FeaturedProperties() {
   };
 
   return (
-    <section className="w-full bg-black py-20 px-4">
+    <section className="w-full bg-black py-16 px-4">
       {/* max-w-7xl এর জায়গায় max-w-6xl বা max-w-5xl করে পুরো সেকশনের উইথ আরেকটু টাইট করা হয়েছে */}
       <div className="max-w-6xl mx-auto space-y-10">
         
