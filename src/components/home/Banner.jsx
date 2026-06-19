@@ -1,133 +1,342 @@
 "use client";
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Button, Input, Select, SelectItem } from "@heroui/react";
-// Gravity UI Icons
-import { Magnifier, MapPin, House, CurrencyDollar } from "@gravity-ui/icons";
 
-export default function HeroBanner({ onSearch }) {
-  const [searchFilters, setSearchFilters] = useState({
-    location: "",
-    propertyType: "",
-    minPrice: "",
-    maxPrice: ""
-  });
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "motion/react";
+import { Button } from "@heroui/react";
 
-  const propertyTypes = ["Apartment", "House", "Studio", "Villa", "Cabin"];
+const propertyTypes = ["Any type", "Apartment", "House", "Studio", "Villa"];
+
+const SLIDES = [
+  {
+    img: "https://www.ooba.co.za/app/uploads/2019/08/property-prices.webp",
+    label: "Dhaka, Gulshan",
+  },
+  {
+    img: "https://ichef.bbci.co.uk/news/800/cpsprodpb/c9ba/live/da2f28f0-bbd4-11f0-a755-ab35484afe82.jpg.webp",
+    label: "Chittagong",
+  },
+];
+
+export default function HeroBanner() {
+  const router = useRouter();
+  const [current, setCurrent] = useState(0);
+  const [selectedType, setSelectedType] = useState("Any type");
+  const [isOpen, setIsOpen] = useState(false);
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [location, setLocation] = useState("");
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % SLIDES.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (location.trim()) params.set("location", location.trim());
+    if (selectedType !== "Any type") params.set("type", selectedType);
+    if (minPrice) params.set("minPrice", minPrice);
+    if (maxPrice) params.set("maxPrice", maxPrice);
+    router.push(`/results?${params.toString()}`);
+  };
+
+  const inputStyle = {
+    backgroundColor: "rgba(255,255,255,0.06)",
+    border: "1px solid rgba(93,202,165,0.22)",
+    borderRadius: "8px",
+    padding: "11px 14px",
+    color: "#e0f0e8",
+    fontSize: "15px",
+    outline: "none",
+    width: "100%",
+  };
+
+  const labelStyle = {
+    color: "#6fa890",
+    fontSize: "10px",
+    fontWeight: 700,
+    letterSpacing: "0.09em",
+  };
 
   return (
-    <div className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-black py-20 px-4">
-      {/* Background Subtle Mesh Effect */}
-      <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px]"></div>
-      
-      {/* Glow Effect */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-zinc-800 rounded-full blur-[120px] opacity-30 pointer-events-none"></div>
-
-      <div className="max-w-7xl w-full mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-16">
-        
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="lg:col-span-7 space-y-6 text-left"
-        >
-          <span className="inline-block px-3 py-1 bg-zinc-900 border border-zinc-800 text-zinc-400 font-medium text-xs tracking-wider uppercase rounded-full">
-            Elevate Your Living Standard
-          </span>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
-            Find Your Next Luxury <br />
-            <span className="text-zinc-500">Rental Escape.</span>
-          </h1>
-          <p className="text-lg text-zinc-400 max-w-xl font-normal leading-relaxed">
-            Discover, seamlessly book, and securely complete transactions online for top-tier residential properties globally.
-          </p>
-        </motion.div>
-
+    <section
+      style={{
+        position: "relative",
+        minHeight: "420px",
+        borderRadius: "0px",         /* banner — not rounded */
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+      }}
+    >
+      {/* ── Sliding Background ── */}
+      <AnimatePresence mode="sync">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          key={current}
+          initial={{ opacity: 0, scale: 1.04 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="lg:col-span-5 hidden lg:block h-[420px] rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl"
+          exit={{ opacity: 0, scale: 0.98 }}
+          transition={{ duration: 0.9, ease: "easeInOut" }}
+          style={{ position: "absolute", inset: 0, zIndex: 0 }}
         >
-          <img 
-            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" 
-            alt="Modern Property Asset" 
-            className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+          <img
+            src={SLIDES[current].img}
+            alt={SLIDES[current].label}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
           />
         </motion.div>
-      </div>
+      </AnimatePresence>
 
-      {/* Floating Dark Search Bar Container */}
-      <motion.div 
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-        className="absolute bottom-4 left-4 right-4 md:bottom-8 max-w-6xl mx-auto w-full bg-zinc-950/80 backdrop-blur-md border border-zinc-800 rounded-2xl p-4 md:p-6 shadow-2xl"
+      {/* Dark overlay */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "linear-gradient(to right, rgba(6,14,10,0.82) 0%, rgba(6,14,10,0.58) 55%, rgba(6,14,10,0.22) 100%)",
+          zIndex: 1,
+        }}
+      />
+
+      {/* ── Content ── */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 2,
+          width: "100%",
+          padding: "44px 40px 38px",
+        }}
       >
-        <form onSubmit={(e) => { e.preventDefault(); onSearch(searchFilters); }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
-          
-          <Input
-            type="text"
-            label="Location"
-            placeholder="City, State..."
-            labelPlacement="outside"
-            classNames={{
-              inputWrapper: "bg-zinc-900 border-zinc-800 hover:border-zinc-700 text-white",
-              label: "text-zinc-400"
+        {/* Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          style={{ marginBottom: "16px" }}
+        >
+          <span
+            style={{
+              backgroundColor: "rgba(93,202,165,0.14)",
+              color: "#5dcaa5",
+              fontSize: "12px",
+              fontWeight: 600,
+              padding: "5px 14px",
+              borderRadius: "999px",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              border: "1px solid rgba(93,202,165,0.32)",
             }}
-            startContent={<MapPin size={16} className="text-zinc-500" />}
-            onChange={(e) => setSearchFilters({...searchFilters, location: e.target.value})}
-          />
-
-          <Select 
-            label="Property Type" 
-            placeholder="Select Type"
-            labelPlacement="outside"
-            classNames={{
-              trigger: "bg-zinc-900 border-zinc-800 hover:border-zinc-700 text-white",
-              label: "text-zinc-400"
-            }}
-            startContent={<House size={16} className="text-zinc-500" />}
-            onChange={(e) => setSearchFilters({...searchFilters, propertyType: e.target.value})}
           >
-            {propertyTypes.map((type) => (
-              <SelectItem key={type} value={type.toLowerCase()} className="text-black">{type}</SelectItem>
-            ))}
-          </Select>
+            ✦ Trusted by 12,000+ tenants
+          </span>
+        </motion.div>
 
-          <Input
-            type="number"
-            label="Min Price ($)"
-            placeholder="0"
-            labelPlacement="outside"
-            classNames={{
-              inputWrapper: "bg-zinc-900 border-zinc-800 hover:border-zinc-700 text-white",
-              label: "text-zinc-400"
+        {/* Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.08 }}
+          style={{
+            fontSize: "clamp(32px, 4.5vw, 56px)",
+            fontWeight: 900,
+            color: "#ffffff",
+            lineHeight: 1.1,
+            marginBottom: "12px",
+            maxWidth: "520px",
+            letterSpacing: "-0.5px",
+          }}
+        >
+          Find a place that feels
+          <br />
+          <span style={{ color: "#5dcaa5" }}>like home.</span>
+        </motion.h1>
+
+        {/* Subtext */}
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.15 }}
+          style={{
+            color: "rgba(255,255,255,0.62)",
+            fontSize: "14px",
+            marginBottom: "30px",
+            lineHeight: 1.65,
+            maxWidth: "380px",
+          }}
+        >
+          Browse verified rentals from trusted owners, book online, and move in
+          with confidence.
+        </motion.p>
+
+        {/* ── Search bar — centered, rounded, bigger ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.22 }}
+          style={{ display: "flex", justifyContent: "center" }}
+        >
+          <div
+            style={{
+              backgroundColor: "rgba(10, 20, 15, 0.80)",
+              backdropFilter: "blur(14px)",
+              borderRadius: "16px",           /* search bar — rounded */
+              padding: "20px 24px",
+              border: "1px solid rgba(93,202,165,0.18)",
+              width: "100%",
+              maxWidth: "780px",
             }}
-            startContent={<CurrencyDollar size={16} className="text-zinc-500" />}
-            onChange={(e) => setSearchFilters({...searchFilters, minPrice: e.target.value})}
-          />
+          >
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "14px",
+                alignItems: "flex-end",
+              }}
+            >
+              {/* Location */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", flex: "1 1 140px" }}>
+                <label style={labelStyle}>LOCATION</label>
+                <input
+                  type="text"
+                  placeholder="City or area"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                  style={inputStyle}
+                />
+              </div>
 
-          <Input
-            type="number"
-            label="Max Price ($)"
-            placeholder="10000"
-            labelPlacement="outside"
-            classNames={{
-              inputWrapper: "bg-zinc-900 border-zinc-800 hover:border-zinc-700 text-white",
-              label: "text-zinc-400"
-            }}
-            startContent={<CurrencyDollar size={16} className="text-zinc-500" />}
-            onChange={(e) => setSearchFilters({...searchFilters, maxPrice: e.target.value})}
-          />
+              {/* Property Type */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", position: "relative", flex: "0 0 auto" }}>
+                <label style={labelStyle}>PROPERTY TYPE</label>
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  style={{
+                    ...inputStyle,
+                    width: "150px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    cursor: "pointer",
+                    border: "1px solid rgba(93,202,165,0.22)",
+                  }}
+                >
+                  {selectedType}
+                  <span style={{ fontSize: "9px", opacity: 0.5 }}>▼</span>
+                </button>
+                {isOpen && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "calc(100% + 4px)",
+                      left: 0,
+                      backgroundColor: "#0a1a12",
+                      border: "1px solid rgba(93,202,165,0.2)",
+                      borderRadius: "10px",
+                      zIndex: 50,
+                      minWidth: "150px",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {propertyTypes.map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => { setSelectedType(t); setIsOpen(false); }}
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          padding: "10px 14px",
+                          textAlign: "left",
+                          color: selectedType === t ? "#5dcaa5" : "#a8d4be",
+                          fontSize: "14px",
+                          backgroundColor: selectedType === t ? "rgba(93,202,165,0.08)" : "transparent",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-          {/* Accent Button (Electric Cyan/Blue) */}
-          <Button type="submit" className="w-full bg-cyan-500 text-black h-12 font-bold rounded-medium hover:bg-cyan-400 shadow-lg shadow-cyan-500/20 transition-all">
-            <Magnifier size={18} className="mr-2" /> Explore
-          </Button>
+              {/* Min Price */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", flex: "0 0 100px" }}>
+                <label style={labelStyle}>MIN PRICE</label>
+                <input
+                  type="number"
+                  placeholder="$0"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(e.target.value)}
+                  style={{ ...inputStyle, width: "100px" }}
+                />
+              </div>
 
-        </form>
-      </motion.div>
-    </div>
+              {/* Max Price */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", flex: "0 0 100px" }}>
+                <label style={labelStyle}>MAX PRICE</label>
+                <input
+                  type="number"
+                  placeholder="$5000"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  style={{ ...inputStyle, width: "100px" }}
+                />
+              </div>
+
+              {/* Search Button */}
+              <Button
+                onPress={handleSearch}
+                style={{
+                  backgroundColor: "#0f6e56",
+                  color: "#ffffff",
+                  borderRadius: "8px",
+                  padding: "0 26px",
+                  fontWeight: 700,
+                  fontSize: "15px",
+                  border: "none",
+                  cursor: "pointer",
+                  height: "44px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "7px",
+                  flexShrink: 0,
+                  letterSpacing: "0.02em",
+                }}
+              >
+                🔍 Search
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Slide Dots */}
+        <div style={{ display: "flex", gap: "6px", marginTop: "20px" }}>
+          {SLIDES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              style={{
+                width: i === current ? "22px" : "7px",
+                height: "7px",
+                borderRadius: "999px",
+                backgroundColor: i === current ? "#5dcaa5" : "rgba(255,255,255,0.28)",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
+                transition: "all 0.3s ease",
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

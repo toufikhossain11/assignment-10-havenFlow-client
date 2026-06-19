@@ -10,19 +10,20 @@ export default function AppNavbar({ user, handleLogout }) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  // একটি কালারফুল (Cyan) আন্ডারলাইন দেওয়ার জন্য একটি কমন ফাংশন তৈরি করা হলো
+  // আন্ডারলাইনের জন্য ব্র্যান্ড মিন্ট গ্রিন (#5dcaa5) কালার ব্যবহার করা হয়েছে
   const activeClass = (path) => pathname === path 
-    ? "text-cyan-400 font-semibold border-b-2 border-cyan-400 pb-1 transition-all duration-300" 
+    ? "text-[#5dcaa5] font-semibold border-b-2 border-[#5dcaa5] pb-1 transition-all duration-300" 
     : "text-zinc-400 hover:text-white transition-colors pb-1";
 
   return (
-    <nav className="w-full bg-black/90 backdrop-blur-md border-b border-zinc-900 sticky top-0 z-50 transition-all">
+    <nav className="w-full bg-black/90 backdrop-blur-md border-b border-[#5dcaa5]/10 sticky top-0 z-50 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           
           {/* Brand Logo */}
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-zinc-900 border border-zinc-800 rounded-lg flex items-center justify-center text-cyan-400 font-bold text-lg">
+            {/* লোগো বক্সে মিন্ট গ্রিন অ্যাকসেন্ট */}
+            <div className="w-8 h-8 bg-[#0a1a12] border border-[#5dcaa5]/30 rounded-lg flex items-center justify-center text-[#5dcaa5] font-bold text-lg shadow-sm">
               H
             </div>
             <p className="font-bold text-xl tracking-tight text-white">HavenFlow</p>
@@ -34,7 +35,7 @@ export default function AppNavbar({ user, handleLogout }) {
             <Link href="/properties" className={activeClass("/properties")}>All Properties</Link>
           </div>
 
-          {/* Right Action Controls (Colorful Buttons for Auth) */}
+          {/* Right Action Controls */}
           <div className="hidden sm:flex items-center gap-4">
             {user ? (
               <Dropdown placement="bottom-end">
@@ -42,24 +43,24 @@ export default function AppNavbar({ user, handleLogout }) {
                   <Avatar
                     isBordered
                     as="button"
-                    className="transition-transform"
-                    color="primary"
+                    className="transition-transform border-[#5dcaa5]"
+                    color="success" // গ্রিন থিমের সাথে ম্যাচিং Avatar বর্ডার
                     name={user.name}
                     size="sm"
                     src={user.photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb"}
                   />
                 </DropdownTrigger>
-                <DropdownMenu aria-label="Profile Actions" variant="flat" className="bg-zinc-950 border border-zinc-800 rounded-xl">
+                <DropdownMenu aria-label="Profile Actions" variant="flat" className="bg-zinc-950 border border-zinc-900 rounded-xl">
                   <DropdownItem key="profile" className="h-14 gap-2 text-white">
-                    <p className="font-semibold text-zinc-400">Signed in as</p>
-                    <p className="font-semibold text-cyan-400">{user.email}</p>
+                    <p className="font-semibold text-zinc-500 text-xs uppercase tracking-wider">Signed in as</p>
+                    <p className="font-semibold text-[#5dcaa5]">{user.email}</p>
                   </DropdownItem>
-                  <DropdownItem key="dashboard" className="text-zinc-300 hover:text-white">
+                  <DropdownItem key="dashboard" className="text-zinc-300 hover:text-[#5dcaa5] transition-colors">
                     <Link href={`/dashboard/${user.role}`} className="flex items-center gap-2 w-full">
                       <LayoutFooter size={16} /> Dashboard
                     </Link>
                   </DropdownItem>
-                  <DropdownItem key="logout" color="danger" onPress={handleLogout} className="text-red-400">
+                  <DropdownItem key="logout" color="danger" onPress={handleLogout} className="text-red-400 hover:bg-red-500/10">
                     <div className="flex items-center gap-2">
                       <ArrowRightFromSquare size={16} /> Log Out
                     </div>
@@ -68,10 +69,16 @@ export default function AppNavbar({ user, handleLogout }) {
               </Dropdown>
             ) : (
               <>
-                <Button as={Link} href="/login" variant="light" className="text-cyan-400 font-semibold hover:bg-zinc-900 transition-colors">
+                {/* লাইট লগইন বাটন */}
+                <Button as={Link} href="/login" variant="light" className="text-[#5dcaa5] font-semibold hover:bg-[#5dcaa5]/10 transition-colors">
                   Login
                 </Button>
-                <Button as={Link} href="/register" className="bg-cyan-500 text-black font-bold rounded-medium hover:bg-cyan-400 shadow-lg shadow-cyan-500/20 transition-all">
+                {/* ব্যানার ও ফুটারের সাথে ম্যাচিং সলিড ডার্ক এমারেল্ড (#0f6e56) রেজিস্টার বাটন */}
+                <Button 
+                  as={Link} 
+                  href="/register" 
+                  className="bg-[#0f6e56] text-white font-bold rounded-xl hover:bg-[#5dcaa5] hover:text-black shadow-md shadow-emerald-950/20 transition-all duration-200"
+                >
                   Register
                 </Button>
               </>
@@ -82,7 +89,7 @@ export default function AppNavbar({ user, handleLogout }) {
           <div className="sm:hidden flex items-center">
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)} 
-              className="text-white p-2 focus:outline-none"
+              className="text-white p-2 focus:outline-none hover:text-[#5dcaa5] transition-colors"
             >
               {isMenuOpen ? <Xmark size={24} /> : <Bars size={24} />}
             </button>
@@ -93,19 +100,19 @@ export default function AppNavbar({ user, handleLogout }) {
 
       {/* Mobile Dropdown Navigation */}
       {isMenuOpen && (
-        <div className="sm:hidden bg-zinc-950 border-b border-zinc-900 px-4 pt-2 pb-4 space-y-3 flex flex-col">
-          <Link href="/" className="text-zinc-300 font-medium py-1 hover:text-cyan-400" onClick={() => setIsMenuOpen(false)}>Home</Link>
-          <Link href="/properties" className="text-zinc-300 font-medium py-1 hover:text-cyan-400" onClick={() => setIsMenuOpen(false)}>All Properties</Link>
-          <div className="border-t border-zinc-900 pt-3 flex flex-col gap-2">
+        <div className="sm:hidden bg-[#030705]/95 backdrop-blur-md border-b border-zinc-900 px-4 pt-2 pb-5 space-y-3 flex flex-col transition-all">
+          <Link href="/" className={`py-1 ${pathname === "/" ? "text-[#5dcaa5]" : "text-zinc-300"}`} onClick={() => setIsMenuOpen(false)}>Home</Link>
+          <Link href="/properties" className={`py-1 ${pathname === "/properties" ? "text-[#5dcaa5]" : "text-zinc-300"}`} onClick={() => setIsMenuOpen(false)}>All Properties</Link>
+          <div className="border-t border-zinc-900/60 pt-3 flex flex-col gap-2.5">
             {user ? (
               <>
                 <Link href={`/dashboard/${user.role}`} className="text-zinc-300 font-medium py-1" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
-                <Button color="danger" variant="flat" onPress={handleLogout} className="w-full justify-start">Log Out</Button>
+                <Button color="danger" variant="flat" onPress={handleLogout} className="w-full justify-start bg-red-500/10 text-red-400 rounded-xl">Log Out</Button>
               </>
             ) : (
               <>
-                <Button as={Link} href="/login" variant="bordered" className="w-full border-cyan-500 text-cyan-400 font-bold" onClick={() => setIsMenuOpen(false)}>Login</Button>
-                <Button as={Link} href="/register" className="w-full bg-cyan-500 text-black font-bold" onClick={() => setIsMenuOpen(false)}>Register</Button>
+                <Button as={Link} href="/login" variant="bordered" className="w-full border-[#5dcaa5]/30 text-[#5dcaa5] font-bold rounded-xl" onClick={() => setIsMenuOpen(false)}>Login</Button>
+                <Button as={Link} href="/register" className="w-full bg-[#0f6e56] text-white font-bold rounded-xl" onClick={() => setIsMenuOpen(false)}>Register</Button>
               </>
             )}
           </div>
