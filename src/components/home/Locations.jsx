@@ -52,7 +52,7 @@ export default function Locations() {
 
   return (
     // সেকশন ব্যাকগ্রাউন্ড সম্পূর্ণ পিওর ব্ল্যাক (bg-black)
-    <section className="w-full bg-black py-20 px-4 relative">
+    <section className="w-full bg-black pb-15 px-4 relative">
       <div className="max-w-6xl mx-auto space-y-10">
         
         {/* Header Title Section */}

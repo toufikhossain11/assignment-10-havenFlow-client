@@ -1,6 +1,6 @@
 import HeroBanner from "@/components/home/Banner";
 import FeaturedProperties from "@/components/home/FeaturedProperties";
-import Locations from "@/components/home/Location";
+import Locations from "@/components/home/Locations";
 import Review from "@/components/home/Review";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 import Image from "next/image";

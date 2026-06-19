@@ -70,17 +70,16 @@ export default function AppNavbar({ user, handleLogout }) {
             ) : (
               <>
                 {/* লাইট লগইন বাটন */}
-                <Button as={Link} href="/login" variant="light" className="text-[#5dcaa5] font-semibold hover:bg-[#5dcaa5]/10 transition-colors">
+                <Link  href="/login" variant="light" className="text-[#5dcaa5] font-semibold hover:bg-[#5dcaa5]/10 transition-colors px-3 py-1 rounded-full">
                   Login
-                </Button>
+                </Link>
                 {/* ব্যানার ও ফুটারের সাথে ম্যাচিং সলিড ডার্ক এমারেল্ড (#0f6e56) রেজিস্টার বাটন */}
-                <Button 
-                  as={Link} 
+                <Link 
                   href="/register" 
-                  className="bg-[#0f6e56] text-white font-bold rounded-xl hover:bg-[#5dcaa5] hover:text-black shadow-md shadow-emerald-950/20 transition-all duration-200"
+                  className="bg-[#0f6e56] text-white font-bold rounded-full hover:bg-[#5dcaa5] hover:text-black shadow-md shadow-emerald-950/20 transition-all duration-200 px-3 py-1"
                 >
                   Register
-                </Button>
+                </Link>
               </>
             )}
           </div>
@@ -107,12 +106,12 @@ export default function AppNavbar({ user, handleLogout }) {
             {user ? (
               <>
                 <Link href={`/dashboard/${user.role}`} className="text-zinc-300 font-medium py-1" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
-                <Button color="danger" variant="flat" onPress={handleLogout} className="w-full justify-start bg-red-500/10 text-red-400 rounded-xl">Log Out</Button>
+                <Link href="/logout" className="w-full justify-start bg-red-500/10 text-red-400 rounded-xl py-1">Log Out</Link>
               </>
             ) : (
               <>
-                <Button as={Link} href="/login" variant="bordered" className="w-full border-[#5dcaa5]/30 text-[#5dcaa5] font-bold rounded-xl" onClick={() => setIsMenuOpen(false)}>Login</Button>
-                <Button as={Link} href="/register" className="w-full bg-[#0f6e56] text-white font-bold rounded-xl" onClick={() => setIsMenuOpen(false)}>Register</Button>
+                <Link  href="/login" variant="bordered" className="w-full border-[#5dcaa5]/30 text-[#5dcaa5] font-bold rounded-xl" onClick={() => setIsMenuOpen(false)}>Login</Link>
+                <Link  href="/register" className="w-full bg-[#0f6e56] text-white font-bold rounded-xl" onClick={() => setIsMenuOpen(false)}>Register</Link>
               </>
             )}
           </div>
