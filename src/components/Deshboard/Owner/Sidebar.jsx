@@ -1,22 +1,41 @@
 "use client";
 import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation"; // কারেন্ট পাথ ট্র্যাক করার জন্য হুক
 import { Button } from "@heroui/react";
-// Gravity Icons
 import { 
-  LayoutCellsLarge, 
-  CirclePlus, 
-  House, 
+  LayoutDashboard, 
+  PlusCircle, 
+  Building2, 
   Calendar, 
   ArrowLeft 
-} from "@gravity-ui/icons";
+} from "lucide-react";
 
-export default function Sidebar({ activeTab, setActiveTab }) {
-  // সাইডবার মেনু আইটেম লিস্ট
+export default function Sidebar() {
+  const pathname = usePathname(); // কারেন্ট ইউআরএল পাথ (যেমন: /deshboard/owner/add-property)
+
+  // প্রতিটি মেনু আইটেমের নির্দিষ্ট 'href'
   const menuItems = [
-    { id: "dashboard-home", label: "Dashboard home", icon: <LayoutCellsLarge className="text-xl" /> },
-    { id: "add-property", label: "Add property", icon: <CirclePlus className="text-xl" /> },
-    { id: "my-properties", label: "My properties", icon: <House className="text-xl" /> },
-    { id: "booking-requests", label: "Booking requests", icon: <Calendar className="text-xl" /> },
+    { 
+      label: "Dashboard home", 
+      icon: <LayoutDashboard size={20} />, 
+      href: "/deshboard/owner/deshboardHome" 
+    },
+    { 
+      label: "Add property", 
+      icon: <PlusCircle size={20} />, 
+      href: "/deshboard/owner/add-property" 
+    },
+    { 
+      label: "My properties", 
+      icon: <Building2 size={20} />, 
+      href: "/deshboard/owner/my-properties" 
+    },
+    { 
+      label: "Booking requests", 
+      icon: <Calendar size={20} />, 
+      href: "/deshboard/owner/booking-requests" 
+    },
   ];
 
   return (
@@ -32,12 +51,14 @@ export default function Sidebar({ activeTab, setActiveTab }) {
           <span className="font-extrabold text-base tracking-tight">Nivasa</span>
         </div>
 
-        {/* ব্যাক টু হোম বাটন (টেক্সট সাইট text-sm করা হয়েছে) */}
+        {/* ব্যাক টু হোম বাটন */}
         <Button 
+          as={Link}
+          href="/"
           variant="bordered" 
           className="w-full border-zinc-800 bg-transparent text-white font-semibold text-sm h-10 justify-start gap-2.5 hover:bg-zinc-900/50"
         >
-          <ArrowLeft className="text-lg" />
+          <ArrowLeft size={18} />
           Back to home
         </Button>
 
@@ -48,20 +69,28 @@ export default function Sidebar({ activeTab, setActiveTab }) {
           </span>
           <div className="flex flex-col gap-1">
             {menuItems.map((item) => {
-              const isActive = activeTab === item.id;
+              // কারেন্ট ইউআরএল পাথের সাথে মিললে অটোমেটিক ট্রু (true) হবে
+              const isActive = pathname === item.href; 
+              
               return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 px-3 h-11 rounded-xl text-sm font-bold transition-all duration-200 ${
-                    isActive 
-                      ? "bg-[#46cba1] text-zinc-950" 
-                      : "text-zinc-400 hover:text-white hover:bg-zinc-900/30"
-                  }`}
+                <Link 
+                  key={item.href} 
+                  href={item.href}
+                  className="w-full block"
                 >
-                  {item.icon}
-                  {item.label}
-                </button>
+                  <button
+                    className={`w-full flex items-center gap-3 px-3 h-11 rounded-xl text-sm font-bold transition-all duration-200 ${
+                      isActive 
+                        ? "bg-[#46cba1] text-zinc-950 shadow-lg shadow-[#46cba1]/10" 
+                        : "text-zinc-400 hover:text-white hover:bg-zinc-900/30"
+                    }`}
+                  >
+                    <span className={isActive ? "text-zinc-950" : "text-zinc-400"}>
+                      {item.icon}
+                    </span>
+                    {item.label}
+                  </button>
+                </Link>
               );
             })}
           </div>
