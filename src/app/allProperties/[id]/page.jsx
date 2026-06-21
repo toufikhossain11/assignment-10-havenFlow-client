@@ -47,9 +47,9 @@ export default function PropertyDetails({ isLoading, propertyData }) {
   const property = propertyData || defaultProperty;
 
   // ২. লোডিং কন্ডিশন ফিক্স (যদি রিয়েল ডাটা ফেচ করেন, তবে !propertyData অন রাখুন। ডামি ডাটা টেস্ট করতে চাইলে শুধু isLoading রাখুন)
-  if (isLoading) {
-    return <LoadingDetails />;
-  }
+  // if (isLoading) {
+  //   return <LoadingDetails />;
+  // }
 
   // রিভিউ স্টেটসমূহ
   const [reviews, setReviews] = useState([
