@@ -32,7 +32,7 @@ export default function AppNavbar({ user, handleLogout }) {
           {/* Desktop Navigation Links */}
           <div className="hidden sm:flex items-center gap-8">
             <Link href="/" className={activeClass("/")}>Home</Link>
-            <Link href="/properties" className={activeClass("/properties")}>All Properties</Link>
+            <Link href="/allProperties" className={activeClass("/properties")}>All Properties</Link>
           </div>
 
           {/* Right Action Controls */}

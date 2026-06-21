@@ -52,15 +52,13 @@ export default function Sidebar() {
         </div>
 
         {/* ব্যাক টু হোম বাটন */}
-        <Button 
-          as={Link}
+        <Link 
           href="/"
-          variant="bordered" 
-          className="w-full border-zinc-800 bg-transparent text-white font-semibold text-sm h-10 justify-start gap-2.5 hover:bg-zinc-900/50"
+          className="px-3 rounded-3xl w-full flex items-center gap-2.5 border-zinc-800 bg-transparent text-white font-semibold text-sm h-10 justify-start hover:bg-zinc-900/50"
         >
           <ArrowLeft size={18} />
           Back to home
-        </Button>
+        </Link>
 
         {/* ওনার ড্যাশবোর্ড নেভিগেশন বাটন্স */}
         <div className="space-y-1">
