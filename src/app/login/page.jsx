@@ -243,7 +243,7 @@ export default function Login() {
         {/* বোটম ফুটার লিংক */}
         <div className="text-center pt-1">
           <p className="text-xs text-zinc-500 font-medium">
-            Don't have an account?{" "}
+            Donot have an account?{" "}
             <span
               onClick={() => router.push("/register")}
               className="text-[#46cba1] font-bold cursor-pointer hover:underline pl-0.5"

@@ -2,27 +2,34 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button, Dropdown, DropdownTrigger, Avatar, DropdownMenu, DropdownItem } from "@heroui/react";
+import { Avatar } from "@heroui/react";
 // Gravity UI Icons 
-import { LayoutFooter, ArrowRightFromSquare, Bars, Xmark } from "@gravity-ui/icons";
+import { ArrowRightFromSquare, Bars, Xmark } from "@gravity-ui/icons";
+import { signOut, useSession } from "@/lib/auth-client";
+import Image from "next/image";
 
-export default function AppNavbar({ user, handleLogout }) {
+export default function AppNavbar() {
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const handlesLogOut = async () => {
+    await signOut();
+  };
+
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
-  // আন্ডারলাইনের জন্য ব্র্যান্ড মিন্ট গ্রিন (#5dcaa5) কালার ব্যবহার করা হয়েছে
-  const activeClass = (path) => pathname === path 
-    ? "text-[#5dcaa5] font-semibold border-b-2 border-[#5dcaa5] pb-1 transition-all duration-300" 
+
+  const activeClass = (path) => pathname === path
+    ? "text-[#5dcaa5] font-semibold border-b-2 border-[#5dcaa5] pb-1 transition-all duration-300"
     : "text-zinc-400 hover:text-white transition-colors pb-1";
 
   return (
     <nav className="w-full bg-black/90 backdrop-blur-md border-b border-[#5dcaa5]/10 sticky top-0 z-50 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          
+
           {/* Brand Logo */}
           <div className="flex items-center gap-2">
-            {/* লোগো বক্সে মিন্ট গ্রিন অ্যাকসেন্ট */}
             <div className="w-8 h-8 bg-[#0a1a12] border border-[#5dcaa5]/30 rounded-lg flex items-center justify-center text-[#5dcaa5] font-bold text-lg shadow-sm">
               H
             </div>
@@ -30,53 +37,58 @@ export default function AppNavbar({ user, handleLogout }) {
           </div>
 
           {/* Desktop Navigation Links */}
+          {/* 💡 ইউজার লগইন থাকলে Dashboard লিংকটি সরাসরি এখানে অন্য লিংকগুলোর পাশে দেখাবে */}
           <div className="hidden sm:flex items-center gap-8">
             <Link href="/" className={activeClass("/")}>Home</Link>
-            <Link href="/allProperties" className={activeClass("/properties")}>All Properties</Link>
+            <Link href="/allProperties" className={activeClass("/allProperties")}>All Properties</Link>
+            {user && (
+              <Link href={`/dashboard/${user.role || "tenant"}`} className={activeClass(`/dashboard/${user.role || "tenant"}`)}>
+                Dashboard
+              </Link>
+            )}
           </div>
 
           {/* Right Action Controls */}
+          {/* 💡 ড্রপডাউন ডিলিট করে এখানে ইমেজ এবং লগআউট বাটন পাশাপাশি রাখা হয়েছে */}
           <div className="hidden sm:flex items-center gap-4">
             {user ? (
-              <Dropdown placement="bottom-end">
-                <DropdownTrigger>
-                  <Avatar
-                    isBordered
-                    as="button"
-                    className="transition-transform border-[#5dcaa5]"
-                    color="success" // গ্রিন থিমের সাথে ম্যাচিং Avatar বর্ডার
-                    name={user.name}
-                    size="sm"
-                    src={user.photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb"}
-                  />
-                </DropdownTrigger>
-                <DropdownMenu aria-label="Profile Actions" variant="flat" className="bg-zinc-950 border border-zinc-900 rounded-xl">
-                  <DropdownItem key="profile" className="h-14 gap-2 text-white">
-                    <p className="font-semibold text-zinc-500 text-xs uppercase tracking-wider">Signed in as</p>
-                    <p className="font-semibold text-[#5dcaa5]">{user.email}</p>
-                  </DropdownItem>
-                  <DropdownItem key="dashboard" className="text-zinc-300 hover:text-[#5dcaa5] transition-colors">
-                    <Link href={`/dashboard/${user.role}`} className="flex items-center gap-2 w-full">
-                      <LayoutFooter size={16} /> Dashboard
-                    </Link>
-                  </DropdownItem>
-                  <DropdownItem key="logout" color="danger" onPress={handleLogout} className="text-red-400 hover:bg-red-500/10">
-                    <div className="flex items-center gap-2">
-                      <ArrowRightFromSquare size={16} /> Log Out
+              <div className="flex items-center gap-3">
+                <div className="text-sm text-zinc-300">Hi, {user.name.split(" ")[0]}!</div>
+                <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border-2 border-cyan-400/40">
+                  {user.image ? (
+                    // image থাকলে → image দেখাবে
+                    <Image
+                      src={user.image}
+                      alt={user.name}
+                      fill
+                      sizes="36px"
+                      className="object-cover"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    // image না থাকলে → নামের প্রথম অক্ষর দেখাবে
+                    <div className="flex h-full w-full items-center justify-center bg-cyan-500/10 text-sm font-bold text-cyan-300">
+                      {user.name?.[0]?.toUpperCase() || "?"}
                     </div>
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
+                  )}
+                </div>
+
+                {/* Log Out Button */}
+                <button
+                  onClick={handlesLogOut}
+                  className="flex items-center gap-1.5 text-red-400 hover:text-red-300 font-medium text-sm transition-colors bg-red-500/10 hover:bg-red-500/20 px-3 py-1.5 rounded-full"
+                >
+                  <ArrowRightFromSquare size={14} /> Log Out
+                </button>
+              </div>
             ) : (
               <>
-                {/* লাইট লগইন বাটন */}
-                <Link  href="/login" variant="light" className="text-[#5dcaa5] font-semibold hover:bg-[#5dcaa5]/10 transition-colors px-3 py-1 rounded-full">
+                <Link href="/login" className="text-[#5dcaa5] font-semibold hover:bg-[#5dcaa5]/10 transition-colors px-3 py-1 rounded-full text-sm">
                   Login
                 </Link>
-                {/* ব্যানার ও ফুটারের সাথে ম্যাচিং সলিড ডার্ক এমারেল্ড (#0f6e56) রেজিস্টার বাটন */}
-                <Link 
-                  href="/register" 
-                  className="bg-[#0f6e56] text-white font-bold rounded-full hover:bg-[#5dcaa5] hover:text-black shadow-md shadow-emerald-950/20 transition-all duration-200 px-3 py-1"
+                <Link
+                  href="/register"
+                  className="bg-[#0f6e56] text-white font-bold rounded-full hover:bg-[#5dcaa5] hover:text-black shadow-md shadow-emerald-950/20 transition-all duration-200 px-4 py-1.5 text-sm"
                 >
                   Register
                 </Link>
@@ -86,8 +98,8 @@ export default function AppNavbar({ user, handleLogout }) {
 
           {/* Mobile Hamburger Menu Icon */}
           <div className="sm:hidden flex items-center">
-            <button 
-              onClick={() => setIsMenuOpen(!isMenuOpen)} 
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-white p-2 focus:outline-none hover:text-[#5dcaa5] transition-colors"
             >
               {isMenuOpen ? <Xmark size={24} /> : <Bars size={24} />}
@@ -101,17 +113,18 @@ export default function AppNavbar({ user, handleLogout }) {
       {isMenuOpen && (
         <div className="sm:hidden bg-[#030705]/95 backdrop-blur-md border-b border-zinc-900 px-4 pt-2 pb-5 space-y-3 flex flex-col transition-all">
           <Link href="/" className={`py-1 ${pathname === "/" ? "text-[#5dcaa5]" : "text-zinc-300"}`} onClick={() => setIsMenuOpen(false)}>Home</Link>
-          <Link href="/properties" className={`py-1 ${pathname === "/properties" ? "text-[#5dcaa5]" : "text-zinc-300"}`} onClick={() => setIsMenuOpen(false)}>All Properties</Link>
+          <Link href="/allProperties" className={`py-1 ${pathname === "/allProperties" ? "text-[#5dcaa5]" : "text-zinc-300"}`} onClick={() => setIsMenuOpen(false)}>All Properties</Link>
+
           <div className="border-t border-zinc-900/60 pt-3 flex flex-col gap-2.5">
             {user ? (
               <>
-                <Link href={`/dashboard/${user.role}`} className="text-zinc-300 font-medium py-1" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
-                <Link href="/logout" className="w-full justify-start bg-red-500/10 text-red-400 rounded-xl py-1">Log Out</Link>
+                <Link href={`/dashboard/${user.role || "tenant"}`} className={`py-1 ${pathname.startsWith("/dashboard") ? "text-[#5dcaa5]" : "text-zinc-300"}`} onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
+                <button onClick={handlesLogOut} className="w-full text-left bg-red-500/10 text-red-400 rounded-xl py-2 px-3 text-sm font-medium">Log Out</button>
               </>
             ) : (
               <>
-                <Link  href="/login" variant="bordered" className="w-full border-[#5dcaa5]/30 text-[#5dcaa5] font-bold rounded-xl" onClick={() => setIsMenuOpen(false)}>Login</Link>
-                <Link  href="/register" className="w-full bg-[#0f6e56] text-white font-bold rounded-xl" onClick={() => setIsMenuOpen(false)}>Register</Link>
+                <Link href="/login" className="w-full border border-[#5dcaa5]/30 text-[#5dcaa5] font-bold rounded-xl py-2 text-center text-sm" onClick={() => setIsMenuOpen(false)}>Login</Link>
+                <Link href="/register" className="w-full bg-[#0f6e56] text-white font-bold rounded-xl py-2 text-center text-sm" onClick={() => setIsMenuOpen(false)}>Register</Link>
               </>
             )}
           </div>
