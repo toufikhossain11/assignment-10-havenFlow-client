@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Avatar } from "@heroui/react";
+
 // Gravity UI Icons 
 import { ArrowRightFromSquare, Bars, Xmark } from "@gravity-ui/icons";
 import { signOut, useSession } from "@/lib/auth-client";
@@ -11,7 +11,7 @@ import Image from "next/image";
 export default function AppNavbar() {
   const { data: session } = useSession();
   const user = session?.user;
-
+// console.log("Navbar session:", user);
   const handlesLogOut = async () => {
     await signOut();
   };
@@ -39,17 +39,17 @@ export default function AppNavbar() {
           {/* Desktop Navigation Links */}
           {/* 💡 ইউজার লগইন থাকলে Dashboard লিংকটি সরাসরি এখানে অন্য লিংকগুলোর পাশে দেখাবে */}
           <div className="hidden sm:flex items-center gap-8">
-            <Link href="/" className={activeClass("/")}>Home</Link>
-            <Link href="/allProperties" className={activeClass("/allProperties")}>All Properties</Link>
+            <Link href="/home" className={activeClass("/home")}>Home</Link>
+            <Link href="/home/allProperties" className={activeClass("/home/allProperties")}>All Properties</Link>
             {user && (
-              <Link href={`/dashboard/${user.role || "tenant"}`} className={activeClass(`/dashboard/${user.role || "tenant"}`)}>
+              <Link href={`/deshboard/${user.role || "tenant"}`} className={activeClass(`/deshboard/${user.role || "tenant"}`)}>
                 Dashboard
               </Link>
             )}
           </div>
 
           {/* Right Action Controls */}
-          {/* 💡 ড্রপডাউন ডিলিট করে এখানে ইমেজ এবং লগআউট বাটন পাশাপাশি রাখা হয়েছে */}
+          {/* 💡 ড্রপডাউন ডিলিট করে এখানে ইমেজ এবং লগআউট বাটন পাশাপাশি রাখা হয়েছে */}
           <div className="hidden sm:flex items-center gap-4">
             {user ? (
               <div className="flex items-center gap-3">
@@ -83,11 +83,11 @@ export default function AppNavbar() {
               </div>
             ) : (
               <>
-                <Link href="/login" className="text-[#5dcaa5] font-semibold hover:bg-[#5dcaa5]/10 transition-colors px-3 py-1 rounded-full text-sm">
+                <Link href="/home/login" className="text-[#5dcaa5] font-semibold hover:bg-[#5dcaa5]/10 transition-colors px-3 py-1 rounded-full text-sm">
                   Login
                 </Link>
                 <Link
-                  href="/register"
+                  href="/home/register"
                   className="bg-[#0f6e56] text-white font-bold rounded-full hover:bg-[#5dcaa5] hover:text-black shadow-md shadow-emerald-950/20 transition-all duration-200 px-4 py-1.5 text-sm"
                 >
                   Register
@@ -112,19 +112,19 @@ export default function AppNavbar() {
       {/* Mobile Dropdown Navigation */}
       {isMenuOpen && (
         <div className="sm:hidden bg-[#030705]/95 backdrop-blur-md border-b border-zinc-900 px-4 pt-2 pb-5 space-y-3 flex flex-col transition-all">
-          <Link href="/" className={`py-1 ${pathname === "/" ? "text-[#5dcaa5]" : "text-zinc-300"}`} onClick={() => setIsMenuOpen(false)}>Home</Link>
-          <Link href="/allProperties" className={`py-1 ${pathname === "/allProperties" ? "text-[#5dcaa5]" : "text-zinc-300"}`} onClick={() => setIsMenuOpen(false)}>All Properties</Link>
+          <Link href="/home" className={`py-1 ${pathname === "/home" ? "text-[#5dcaa5]" : "text-zinc-300"}`} onClick={() => setIsMenuOpen(false)}>Home</Link>
+          <Link href="/home/allProperties" className={`py-1 ${pathname === "/home/allProperties" ? "text-[#5dcaa5]" : "text-zinc-300"}`} onClick={() => setIsMenuOpen(false)}>All Properties</Link>
 
           <div className="border-t border-zinc-900/60 pt-3 flex flex-col gap-2.5">
             {user ? (
               <>
-                <Link href={`/dashboard/${user.role || "tenant"}`} className={`py-1 ${pathname.startsWith("/dashboard") ? "text-[#5dcaa5]" : "text-zinc-300"}`} onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
+                <Link href={`/deshboard/${user.role || "tenant"}`} className={`py-1 ${pathname.startsWith("/deshboard") ? "text-[#5dcaa5]" : "text-zinc-300"}`} onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
                 <button onClick={handlesLogOut} className="w-full text-left bg-red-500/10 text-red-400 rounded-xl py-2 px-3 text-sm font-medium">Log Out</button>
               </>
             ) : (
               <>
-                <Link href="/login" className="w-full border border-[#5dcaa5]/30 text-[#5dcaa5] font-bold rounded-xl py-2 text-center text-sm" onClick={() => setIsMenuOpen(false)}>Login</Link>
-                <Link href="/register" className="w-full bg-[#0f6e56] text-white font-bold rounded-xl py-2 text-center text-sm" onClick={() => setIsMenuOpen(false)}>Register</Link>
+                <Link href="/home/login" className="w-full border border-[#5dcaa5]/30 text-[#5dcaa5] font-bold rounded-xl py-2 text-center text-sm" onClick={() => setIsMenuOpen(false)}>Login</Link>
+                <Link href="/home/register" className="w-full bg-[#0f6e56] text-white font-bold rounded-xl py-2 text-center text-sm" onClick={() => setIsMenuOpen(false)}>Register</Link>
               </>
             )}
           </div>

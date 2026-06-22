@@ -19,7 +19,7 @@ export default function Sidebar() {
     { 
       label: "Dashboard home", 
       icon: <LayoutDashboard size={20} />, 
-      href: "/deshboard/owner/deshboardHome" 
+      href: "/deshboard/owner" 
     },
     { 
       label: "Add property", 
@@ -53,7 +53,7 @@ export default function Sidebar() {
 
         {/* ব্যাক টু হোম বাটন */}
         <Link 
-          href="/"
+          href="/home"
           className="px-3 rounded-3xl w-full flex items-center gap-2.5 border-zinc-800 bg-transparent text-white font-semibold text-sm h-10 justify-start hover:bg-zinc-900/50"
         >
           <ArrowLeft size={18} />

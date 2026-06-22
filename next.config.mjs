@@ -7,6 +7,13 @@ const nextConfig = {
         hostname: 'i.ibb.co.com'
       },
       {
+        hostname: 'www.ooba.co.za'
+      },
+       {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
         hostname: 'lh3.googleusercontent.com' 
       },
       { hostname: 'www.google.com' }, 

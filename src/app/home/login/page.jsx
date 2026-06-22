@@ -42,7 +42,7 @@ export default function Login() {
           onSuccess: (context) => {
             // console.log("context:", context);
             toast.success("Welcome back! Redirecting...");
-            router.push("/");
+            router.push("/home");
           },
           onError: (context) => {
             // console.log("onError context:", context);
@@ -80,7 +80,7 @@ export default function Login() {
     try {
       await signIn.social({
         provider: "google",
-        callbackURL: "/", // 👈 লগইন সফল হওয়ার পর ইউজার সরাসরি এই রুটে রিডাইরেক্ট হবে
+        callbackURL: "/home", // 👈 লগইন সফল হওয়ার পর ইউজার সরাসরি এই রুটে রিডাইরেক্ট হবে
         // errorCallbackURL: "/login", // এরর বা ক্যানসেল হলে এই পেজেই ব্যাক করবে
       });
       toast.success("Redirecting to Google...");
@@ -202,7 +202,7 @@ export default function Login() {
             {/* Forgot Password লিংক */}
             <div className="text-right pt-1">
               <span
-                onClick={() => router.push("/forgot-password")}
+                onClick={() => router.push("/home/forgot-password")}
                 className="text-[#46cba1] text-xs font-bold cursor-pointer hover:underline"
               >
                 Forgot password?
@@ -245,7 +245,7 @@ export default function Login() {
           <p className="text-xs text-zinc-500 font-medium">
             Donot have an account?{" "}
             <span
-              onClick={() => router.push("/register")}
+              onClick={() => router.push("/home/register")}
               className="text-[#46cba1] font-bold cursor-pointer hover:underline pl-0.5"
             >
               Register

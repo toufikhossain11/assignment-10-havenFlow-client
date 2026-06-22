@@ -62,7 +62,7 @@ export default function Footer() {
             </div>
             <ul className="space-y-3 text-sm pt-2">
               <li>
-                <Link href="/" className="text-zinc-400 hover:text-[#5dcaa5] inline-flex items-center transition-all duration-200 hover:translate-x-1">Home</Link>
+                <Link href="/home" className="text-zinc-400 hover:text-[#5dcaa5] inline-flex items-center transition-all duration-200 hover:translate-x-1">Home</Link>
               </li>
               <li>
                 <Link href="/properties" className="text-zinc-400 hover:text-[#5dcaa5] inline-flex items-center transition-all duration-200 hover:translate-x-1">All Properties</Link>

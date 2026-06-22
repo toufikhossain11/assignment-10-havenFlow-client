@@ -17,6 +17,7 @@ import {
   CartesianGrid, 
   Tooltip 
 } from "recharts";
+import { useSession } from "@/lib/auth-client";
 
 // ১২ মাসের ফেইক ডাটা
 const earningsData = [
@@ -35,13 +36,15 @@ const earningsData = [
 ];
 
 export default function DashboardHome() {
+  const { data: session } = useSession();
+    const user = session?.user;
   return (
     <div className="space-y-6 w-full mx-auto p-4">
       {/* হেডার ও অ্যাকশন বাটন */}
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-2xl font-bold text-white tracking-tight">Dashboard home</h1>
-          <p className="text-zinc-500 text-sm mt-0.5">Welcome back, Mahmud</p>
+          <p className="text-zinc-500 text-sm mt-0.5">Welcome back, {user?.name || "Mahmud"}</p>
         </div>
         <Button isIconOnly variant="light" className="text-zinc-400 border border-zinc-800 rounded-lg min-w-9 h-9">
           <MoreHorizontal size={18} />

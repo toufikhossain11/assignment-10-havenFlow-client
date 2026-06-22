@@ -45,7 +45,7 @@ export default function Register() {
         fetchOptions: {
           onSuccess: () => {
             toast.success("Account created successfully! Redirecting...");
-            router.push("/login");
+            router.push("/home/login");
           },
           onError: (context) => {
             if (context.error.status === 422) {
@@ -70,7 +70,7 @@ export default function Register() {
     try {
       await signIn.social({
         provider: "google",
-        callbackURL: "/login", // 👈 লগইন সফল হওয়ার পর ইউজার কোন পেজে রিডাইরেক্ট হবে (যেমন হোম পেজ বা ড্যাশবোর্ড)
+        callbackURL: "/home/login", // 👈 লগইন সফল হওয়ার পর ইউজার কোন পেজে রিডাইরেক্ট হবে (যেমন হোম পেজ বা ড্যাশবোর্ড)
         // errorCallbackURL: "/register", // কোনো কারণে এরর হলে কোন পেজে ব্যাক করবে
       });
       toast.success("Redirecting to Google...");
@@ -264,7 +264,7 @@ export default function Register() {
           <p className="text-xs text-zinc-500 font-medium">
             Already have an account?{" "}
             <span
-              onClick={() => router.push("/login")}
+              onClick={() => router.push("/home/login")}
               className="text-[#46cba1] font-bold cursor-pointer hover:underline pl-0.5"
             >
               Log in

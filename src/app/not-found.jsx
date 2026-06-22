@@ -34,7 +34,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row gap-3 w-full justify-center">
           
           <Link
-            href="/"
+            href="/home"
             className="bg-[#46cba1] text-zinc-950 font-bold text-sm px-5 h-11 rounded-xl flex items-center gap-2 transition-transform active:scale-95"
           >
             <Home size={16} />

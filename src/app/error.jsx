@@ -45,7 +45,7 @@ export default function Error({ error, reset }) {
           {/* Back to home বাটন (Bordered style) */}
           <Button
             as={Link}
-            href="/"
+            href="/home"
             variant="bordered"
             className="border-zinc-800 bg-transparent text-white font-bold text-sm px-5 h-11 rounded-xl flex items-center gap-2 hover:bg-zinc-900/40 transition-colors"
           >
