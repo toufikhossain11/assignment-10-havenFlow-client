@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { Button, Card } from "@heroui/react";
 import { House, MapPin } from "@gravity-ui/icons";
+import Link from "next/link";
 
 const PropertiesCard = ({ properties }) => {
     const itemVariants = {
@@ -112,12 +113,14 @@ const PropertiesCard = ({ properties }) => {
                                     </div>
 
                                     {/* Action Button */}
+                                    <Link href={`/home/allProperties/${property._id}`}>
                                     <Button
                                         size="md"
                                         className="bg-[#0f6e56] text-white font-bold px-5 h-10 rounded-xl border border-[#0f6e56] hover:bg-[#5dcaa5] hover:text-black hover:border-[#5dcaa5] transition-all duration-200 shadow-md text-sm tracking-wide"
                                     >
                                         View Details
                                     </Button>
+                                    </Link>
                                 </div>
 
                             </div>
