@@ -8,7 +8,8 @@ import { getProperties, getReviews } from "@/lib/homeData/data";
 async function FeaturedPropertiesWrapper() {
   const properties = await getProperties();
 
-  return <FeaturedProperties properties={properties} />;
+  return <FeaturedProperties properties={properties} />
+  
 }
 
 async function ReviewWrapper() {
