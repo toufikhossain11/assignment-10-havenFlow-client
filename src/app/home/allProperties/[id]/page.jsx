@@ -1,5 +1,5 @@
-import DetailsPage from '@/components/DetailsPage';
-import React from 'react';
+import DetailsPage from '@/components/PropartesDetais/DetailsPage';
+
 
 const PropertyDetailsPage = async ({ params }) => {
   const { id } = await params;
@@ -21,7 +21,7 @@ const data = await res.json();
   }
   return (
     <div>
-      <DetailsPage data={data} isLoading={false} />
+      <DetailsPage data={data} />
     </div>
   );
 };

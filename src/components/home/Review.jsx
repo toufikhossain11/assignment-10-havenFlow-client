@@ -6,43 +6,9 @@ import { Card, Avatar } from "@heroui/react";
 // Gravity UI Icon স্টার (Star) রেটিং এর জন্য
 import { Star, StarFill } from "@gravity-ui/icons";
 
-export default function Testimonials() {
+export default function Review({ reviews = [] }) {
+  console.log("Fetched Reviews:", reviews); // কনসোল লগে রিভিউ ডেটা দেখানো হচ্ছে
   
-  // image_6370c8.png এর রিয়েল ডেটা
-  const reviews = [
-    {
-      id: 1,
-      name: "Rafiq Ahmed",
-      time: "2 weeks ago",
-      initials: "RA",
-      rating: 5,
-      comment: "Booking was smooth and the owner responded quickly to every question.",
-    },
-    {
-      id: 2,
-      name: "Sumaiya Khan",
-      time: "1 month ago",
-      initials: "SK",
-      rating: 4,
-      comment: "Loved how easy it was to filter by location and price.",
-    },
-    {
-      id: 3,
-      name: "Tanvir Islam",
-      time: "3 weeks ago",
-      initials: "TI",
-      rating: 5,
-      comment: "The dashboard made tracking my booking status really simple.",
-    },
-    {
-      id: 4,
-      name: "Nusrat Hossain",
-      time: "5 days ago",
-      initials: "NH",
-      rating: 4,
-      comment: "Customer support helped me resolve a payment issue same day.",
-    },
-  ];
 
   // ইনফিনিট অ্যানিমেশন লুপকে নিরবচ্ছিন্ন রাখতে ডেটা ডুপ্লিকেট করা হয়েছে
   const duplicatedReviews = [...reviews, ...reviews];
@@ -113,14 +79,14 @@ export default function Testimonials() {
                 {/* User Info Header Area */}
                 <div className="flex items-center gap-3">
                   <Avatar 
-                    name={review.initials} 
+                    name={review.userName?.slice(0, 2) || NA} 
                     className="bg-zinc-900 border border-zinc-800 text-zinc-300 font-bold text-sm h-10 w-10"
                   />
                   <div>
                     <h4 className="font-bold text-base text-white tracking-tight hover:text-[#5dcaa5] transition-colors">
-                      {review.name}
+                      {review?.userName}
                     </h4>
-                    <p className="text-zinc-600 text-xs font-medium">{review.time}</p>
+                    <p className="text-zinc-600 text-xs font-medium">{review?.createdAt}</p>
                   </div>
                 </div>
 

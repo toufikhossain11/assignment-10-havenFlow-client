@@ -16,50 +16,32 @@ import {
   Maximize, 
   Wifi, 
   Car, 
-  Snowflake, 
-  Star, 
   Calendar,
   Phone,
   FileText
 } from "lucide-react";
-import LoadingDetails from "./Deshboard/Owner/LoadingDetails";
+import { useSession } from "@/lib/auth-client";
+import PropertyReviewSection from "./PropertyReviewSection";
 
-
-export default function DetailsPage({ data, isLoading }) {
+export default function DetailsPage({ data }) {
   const [isFavorite, setIsFavorite] = useState(false);
-  const [userRating, setUserRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
-  const [reviewText, setReviewText] = useState("");
-  
-  // প্রথম ডামি রিভিউ স্টেট
-  const [reviews, setReviews] = useState([
-    { id: 1, user: "Rafiq Ahmed", rating: 5, time: "2 weeks ago", text: "Booking was smooth and the owner responded quickly to every question." }
-  ]);
-
-  if (isLoading) {
-    return <LoadingDetails />;
-  }
+  const { data: session } = useSession();
+  const user = session?.user;
 
   if (!data) {
     return <div className="text-center text-white p-20">No property data found!</div>;
   }
 
-  const handleReviewSubmit = (e) => {
-    e.preventDefault();
-    if (!reviewText.trim() || userRating === 0) return;
-
-    const newReview = {
-      id: Date.now(),
-      user: "Current User",
-      rating: userRating,
-      time: "Just now",
-      text: reviewText
-    };
-
-    setReviews([newReview, ...reviews]);
-    setReviewText("");
-    setUserRating(0);
-  };
+  // প্রথম ডামি রিভিউ যা নতুন কম্পোনেন্টে পাস করা হবে
+  const dummyReviews = [
+    { 
+      id: 1, 
+      userName: "Rafiq Ahmed", 
+      rating: 5, 
+      createdAt: "2 weeks ago", 
+      comment: "Booking was smooth and the owner responded quickly to every question." 
+    }
+  ];
 
   return (
     <div className="w-full min-h-screen bg-[#040605] text-white p-4 md:p-6 flex justify-center items-start">
@@ -145,16 +127,16 @@ export default function DetailsPage({ data, isLoading }) {
               )}
             </div>
 
-            {/* বটম সেকশন: ওনার কার্ড ও বাটন */}
+            {/* ওনার কার্ড ও বাটন */}
             <div className="space-y-4 pt-4">
               <div className="bg-transparent border border-zinc-900 p-4 rounded-2xl flex items-center justify-between w-full shadow-sm">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-[#0b1713] border border-[#1b362c] text-[#46cba1] font-black flex items-center justify-center text-base shadow-inner">
-                    {data?.ownerName ? data.ownerName.split(" ").map(n => n[0]).join("") : "OWN"}
+                    {user?.name ? user.name.split(" ").map(n => n[0]).join("") : "OWN"}
                   </div>
                   <div>
-                    <h4 className="text-lg font-bold text-zinc-200">{data?.ownerName}</h4>
-                    <p className="text-sm text-zinc-500 font-medium tracking-wide uppercase">{data?.ownerEmail}</p>
+                    <h4 className="text-lg font-bold text-zinc-200">{user?.name || data?.ownerName}</h4>
+                    <p className="text-sm text-zinc-500 font-medium tracking-wide uppercase">{user?.email || data?.ownerEmail}</p>
                   </div>
                 </div>
                 <Button 
@@ -165,6 +147,7 @@ export default function DetailsPage({ data, isLoading }) {
                 </Button>
               </div>
 
+              {/* বুকিং মডাল */}
               <Modal>
                 <Button 
                   className="w-full h-14 bg-[#46cba1] hover:bg-[#3bb38e] text-zinc-950 font-black text-lg rounded-2xl transition-all shadow-xl shadow-[#46cba1]/10"
@@ -216,64 +199,11 @@ export default function DetailsPage({ data, isLoading }) {
           </div>
         </div>
 
-        {/* নিচের রিভিউ সেকশন */}
-        <div className="space-y-6 pt-6 border-t border-zinc-900">
-          <Surface variant="default" className="bg-[#050806] border border-zinc-900 p-8 rounded-3xl text-left shadow-lg">
-            <form onSubmit={handleReviewSubmit} className="space-y-6">
-              <h3 className="text-xl font-black text-zinc-200 uppercase tracking-widest">Write a review</h3>
-              <div className="space-y-2">
-                <label className="text-sm text-zinc-500 font-bold uppercase">Your rating</label>
-                <div className="flex items-center gap-2">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => setUserRating(star)}
-                      onMouseEnter={() => setHoverRating(star)}
-                      onMouseLeave={() => setHoverRating(0)}
-                      className="text-zinc-800 hover:scale-110 transition-transform"
-                    >
-                      <Star size={24} fill={(hoverRating || userRating) >= star ? "#46cba1" : "none"} className={(hoverRating || userRating) >= star ? "text-[#46cba1]" : "text-zinc-800"} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <TextField className="w-full text-left" name="reviewText" slot="textarea">
-                <Label className="text-sm text-zinc-500 font-bold uppercase mb-2 block">Your review</Label>
-                <Input
-                  placeholder="Share your experience with this property..."
-                  value={reviewText}
-                  onChange={(e) => setReviewText(e.target.value)}
-                  className="bg-black border border-zinc-900 rounded-2xl text-lg text-zinc-200 min-h-[120px] pt-4 px-4 focus-within:border-[#46cba1]/30 transition-all"
-                />
-              </TextField>
-              <Button type="submit" size="lg" className="bg-[#46cba1] hover:bg-[#3bb38e] text-zinc-950 font-black px-8 h-12 rounded-xl text-sm shadow-lg">Submit review</Button>
-            </form>
-          </Surface>
-
-          {/* রিভিউ লিস্ট */}
-          <div className="space-y-4 text-left px-2">
-            <h3 className="text-lg font-black text-zinc-400 uppercase tracking-widest">User Reviews</h3>
-            <div className="grid grid-cols-1 gap-4">
-              {reviews.map((rev) => (
-                <div key={rev.id} className="p-6 bg-transparent border border-zinc-900 rounded-2xl space-y-3 hover:border-zinc-800 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-lg font-black text-zinc-200">{rev.user}</span>
-                      <div className="flex items-center gap-1">
-                        {[...Array(rev.rating)].map((_, i) => (
-                          <Star key={i} size={14} fill="#46cba1" className="text-[#46cba1]" />
-                        ))}
-                      </div>
-                    </div>
-                    <span className="text-sm text-zinc-600 font-bold uppercase">{rev.time}</span>
-                  </div>
-                  <p className="text-lg text-zinc-400 font-light leading-relaxed">{rev.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        {/* নতুন কাস্টম রিভিউ সেকশন কম্পোনেন্ট */}
+        <PropertyReviewSection 
+          propertyId={data?._id || "property_001"} 
+          initialReviews={dummyReviews} 
+        />
 
       </div>
     </div>

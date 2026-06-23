@@ -11,17 +11,16 @@ export const getProperties = async () => {
   }
   return res.json();
 };
+export const getReviews = async () => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/reviews`,
+    {
+      cache: "no-store",
+    }
+  );
 
-// export const getAllProperties = async () => {
-//   const res = await fetch(
-//     `${process.env.NEXT_PUBLIC_BASE_URL}/properties`,
-//     {
-//       cache: "no-store",
-//     }
-//   );
-
-//   if (!res.ok) {
-//     throw new Error("Failed to fetch properties");
-//   }
-//   return res.json();
-// };
+  if (!res.ok) {
+    throw new Error("Failed to fetch reviews");
+  }
+  return res.json();
+};

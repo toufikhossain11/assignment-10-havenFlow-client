@@ -3,12 +3,17 @@ import FeaturedProperties from "@/components/home/FeaturedProperties";
 import Locations from "@/components/home/Locations";
 import Review from "@/components/home/Review";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
-import { getProperties } from "@/lib/homeData/data";
+import { getProperties, getReviews } from "@/lib/homeData/data";
 
 async function FeaturedPropertiesWrapper() {
   const properties = await getProperties();
 
   return <FeaturedProperties properties={properties} />;
+}
+
+async function ReviewWrapper() {
+  const reviews = await getReviews();
+  return <Review reviews={reviews} />;
 }
 
 export default function Home() {
@@ -17,7 +22,7 @@ export default function Home() {
       <HeroBanner/>
       <FeaturedPropertiesWrapper/>
       <WhyChooseUs/>
-      <Review/>
+      <ReviewWrapper/>
       <Locations/>
     </div>
   );
