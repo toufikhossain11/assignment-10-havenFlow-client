@@ -11,6 +11,7 @@ export const getProperties = async () => {
   }
   return res.json();
 };
+
 export const getReviews = async () => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/reviews`,
@@ -18,7 +19,18 @@ export const getReviews = async () => {
       cache: "no-store",
     }
   );
-
+  if (!res.ok) {
+    throw new Error("Failed to fetch reviews");
+  }
+  return res.json();
+};
+export const getUsers = async () => {
+  const res = await fetch(
+    `http://localhost:5000/user`,
+    {
+      cache: "no-store",
+    }
+  );
   if (!res.ok) {
     throw new Error("Failed to fetch reviews");
   }

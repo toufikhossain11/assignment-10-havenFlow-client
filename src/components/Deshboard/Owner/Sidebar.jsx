@@ -32,8 +32,8 @@ export default function Sidebar() {
 
   // ২. অ্যাডমিন (Admin) মেনু আইটেমস
   const adminItems = [
-    { label: "Dashboard home", icon: <LayoutDashboard size={20} />, href: "/deshboard/admin" },
-    { label: "All users", icon: <Users size={20} />, href: "/deshboard/admin/all-users" },
+    // { label: "Dashboard home", icon: <LayoutDashboard size={20} />, href: "/deshboard/admin" },
+    { label: "All users", icon: <Users size={20} />, href: "/deshboard/admin" },
     { label: "All properties", icon: <Building2 size={20} />, href: "/deshboard/admin/all-properties" },
     { label: "All bookings", icon: <Calendar size={20} />, href: "/deshboard/admin/all-bookings" },
     { label: "Transactions", icon: <CreditCard size={20} />, href: "/deshboard/admin/transactions" },

@@ -36,7 +36,7 @@ const demoFavorites = [
   }
 ];
 
-export default function Favorites() {
+export default function FavoritesPage() {
   const [favorites, setFavorites] = useState(demoFavorites);
 
   // রিমুভ হ্যান্ডলার (আপাতত ফ্রন্টএন্ড স্টেট থেকে ডিলিট করার জন্য)
