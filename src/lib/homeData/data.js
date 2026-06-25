@@ -24,15 +24,28 @@ export const getReviews = async () => {
   }
   return res.json();
 };
+//admin users btn json
 export const getUsers = async () => {
   const res = await fetch(
-    `http://localhost:5000/user`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/user`,
     {
       cache: "no-store",
     }
   );
   if (!res.ok) {
     throw new Error("Failed to fetch reviews");
+  }
+  return res.json();
+};
+export const getAdminProperties = async () => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/admin/properties`,  // ✅ eta status filter chara shob property dey
+    {
+      cache: "no-store",
+    }
+  );
+  if (!res.ok) {
+    throw new Error("Failed to fetch properties");
   }
   return res.json();
 };
