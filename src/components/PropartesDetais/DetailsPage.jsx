@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Button, 
   Modal, 
@@ -22,17 +22,103 @@ import {
 } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import PropertyReviewSection from "./PropertyReviewSection";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function DetailsPage({ data }) {
   const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteId, setFavoriteId] = useState(null); // সার্ভারের তৈরি হওয়া ফেভারিট ডকুমেন্ট আইডি রাখার জন্য
   const { data: session } = useSession();
   const user = session?.user;
+
+  const propertyId = data?._id?.$oid || data?._id || data?.id;
+
+  // ✅ ১. পেজ লোড হলে চেক করবে এই প্রপার্টিটা অলরেডি ফেভারিট লিস্টে আছে কি না
+  useEffect(() => {
+    if (user?.email && propertyId) {
+      fetch(`http://localhost:5000/favorites/check?email=${user.email}&propertyId=${propertyId}`)
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.isFavorite) {
+            setIsFavorite(true);
+            setFavoriteId(result.favoriteId); // যদি অলরেডি থাকে তার আইডি সেভ করে রাখছি
+          }
+        })
+        .catch((err) => console.error("Error checking favorite status:", err));
+    }
+  }, [user?.email, propertyId]);
+
+  // ✅ ২. ফেভারিট বাটন টগল হ্যান্ডলার (সার্ভার কানেকশন)
+  const handleFavoriteToggle = async () => {
+    if (!user) {
+      toast.error("Please login first to add favorites!");
+      return;
+    }
+
+    // অপটিমিস্টিক ইন্টারফেস আপডেট (ইউজার এক্সপেরিয়েন্স ফাস্ট রাখার জন্য)
+    const previousState = isFavorite;
+    setIsFavorite(!previousState);
+
+    if (!previousState) {
+      // ফেভারিট লিস্টে ডেটা যোগ করার JSON স্ট্রাকচার (আপনার দেওয়া স্কিমা অনুযায়ী)
+      const favoriteData = {
+        userId: user?.id || user?._id || "unknown_id",
+        userEmail: user?.email,
+        propertyId: propertyId,
+        title: data?.title || "Untitled Property",
+        location: data?.location || "N/A",
+        rent: Number(data?.rent || 0),
+        image: data?.images || "",
+        ownerId: data?.ownerId || "unknown_owner_id",
+        createdAt: new Date().toISOString().split('T')[0] // '2026-06-26' ফরম্যাট
+      };
+
+      try {
+        const response = await fetch("http://localhost:5000/favorites", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(favoriteData),
+        });
+        const result = await response.json();
+
+        if (result.insertedId) {
+          setFavoriteId(result.insertedId);
+          toast.success("Added to favorites!");
+        } else {
+          setIsFavorite(previousState); // ফেইল করলে আগের অবস্থায় ব্যাক করবে
+          toast.error("Failed to add to favorites.");
+        }
+      } catch (error) {
+        console.error(error);
+        setIsFavorite(previousState);
+        toast.error("Something went wrong!");
+      }
+    } else {
+      // অলরেডি ফেভারিট করা থাকলে রিমুভ (DELETE) করার লজিক
+      try {
+        const response = await fetch(`http://localhost:5000/favorites/${favoriteId || propertyId}?email=${user.email}`, {
+          method: "DELETE",
+        });
+        const result = await response.json();
+
+        if (result.deletedCount > 0) {
+          setFavoriteId(null);
+          toast.success("Removed from favorites.");
+        } else {
+          setIsFavorite(previousState);
+          toast.error("Failed to remove from favorites.");
+        }
+      } catch (error) {
+        console.error(error);
+        setIsFavorite(previousState);
+        toast.error("Something went wrong!");
+      }
+    }
+  };
 
   if (!data) {
     return <div className="text-center text-white p-20">No property data found!</div>;
   }
 
-  // প্রথম ডামি রিভিউ যা নতুন কম্পোনেন্টে পাস করা হবে
   const dummyReviews = [
     { 
       id: 1, 
@@ -45,6 +131,14 @@ export default function DetailsPage({ data }) {
 
   return (
     <div className="w-full min-h-screen bg-[#040605] text-white p-4 md:p-6 flex justify-center items-start">
+      {/* নোটিফিকেশন টোস্টার */}
+      <Toaster 
+        position="top-center" 
+        toastOptions={{
+          style: { background: "#0b120f", color: "#fff", border: "1px solid #1b352b" }
+        }} 
+      />
+
       <div className="w-full max-w-7xl space-y-8">
         
         {/* ওপরের মূল সেকশন */}
@@ -76,9 +170,11 @@ export default function DetailsPage({ data }) {
                     <span>{data?.location}</span>
                   </div>
                 </div>
+
+                {/* ফেভারিট বাটন - হ্যান্ডলার যুক্ত করা হয়েছে */}
                 <Button
                   isIconOnly
-                  onPress={() => setIsFavorite(!isFavorite)}
+                  onPress={handleFavoriteToggle}
                   className={`border rounded-xl h-12 w-12 min-w-12 transition-all bg-transparent ${
                     isFavorite ? "border-[#46cba1] text-[#46cba1]" : "border-zinc-800 text-zinc-500 hover:text-white"
                   }`}
@@ -105,7 +201,6 @@ export default function DetailsPage({ data }) {
                   <Maximize size={16} /> {data?.propertySize}
                 </div>
                 
-                {/* ডাইনামিক অ্যামেনিটিজ রেন্ডারিং */}
                 {data?.amenities?.map((amenity, idx) => (
                   <div key={idx} className="flex items-center gap-2 px-4 py-2 bg-[#09110e] border border-[#1b352b] rounded-xl text-sm font-bold text-[#46cba1]">
                     {amenity.toLowerCase() === "wifi" ? <Wifi size={16} /> : amenity.toLowerCase() === "parking" ? <Car size={16} /> : <FileText size={16} />} 
@@ -119,7 +214,6 @@ export default function DetailsPage({ data }) {
                 {data?.description}
               </p>
               
-              {/* এক্সট্রা ফিচারস (যদি থাকে) */}
               {data?.extraFeatures && (
                 <p className="text-sm text-zinc-400 italic">
                   <span className="text-[#46cba1] font-bold">Features:</span> {data.extraFeatures}
@@ -201,7 +295,7 @@ export default function DetailsPage({ data }) {
 
         {/* নতুন কাস্টম রিভিউ সেকশন কম্পোনেন্ট */}
         <PropertyReviewSection 
-          propertyId={data?._id || "property_001"} 
+          propertyId={propertyId || "property_001"} 
           initialReviews={dummyReviews} 
         />
 

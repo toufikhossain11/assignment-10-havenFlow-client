@@ -40,7 +40,7 @@ export default function ProfileCard() {
     );
   }
 
-  // নামের প্রথম ২টি শব্দের প্রথম অক্ষর নেওয়ার লজিক
+  // নামের প্রথম ২টি শব্দের প্রথম অক্ষর নেওয়ার লজিক
   const initials = user.name
     ? user.name
         .trim()
