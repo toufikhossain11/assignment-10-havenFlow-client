@@ -4,7 +4,7 @@ import { Label, ListBox, Select, TextArea, Input, Button } from "@heroui/react";
 import { Wifi, Car, Snowflake, Plus, UploadCloud } from "lucide-react";
 
 export default function EditPropertyModal({ editData, onClose, onSave }) {
-  // ফর্মের মেইন স্টেট গ্রপ (editData থাকলে সেটি দিয়ে ইনিশিয়ালাইজ হবে)
+  // ফর্মের মেইন স্টেট গ্রুপ
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -30,20 +30,30 @@ export default function EditPropertyModal({ editData, onClose, onSave }) {
   // টেবিল থেকে আসা ডেটা ফর্মে সেট করার ইফেক্ট
   useEffect(() => {
     if (editData) {
-      // রেন্ট টেক্সট থেকে শুধু নাম্বার আলাদা করার লজিক (Tk 18,000 -> 18000)
-      const numericPrice = editData.rent ? editData.rent.replace(/[^0-9]/g, "") : "";
+      // ক্র্যাশ প্রোটেকশন লজিক
+      const rawRent = editData.rent !== undefined && editData.rent !== null ? String(editData.rent) : "";
+      const numericPrice = rawRent.replace(/[^0-9]/g, "");
       
       setFormData({
-        title: editData.name || "",
-        description: editData.description || `Beautiful ${editData.type} available for rent.`,
+        title: editData.title || editData.name || "", 
+        description: editData.description || `Beautiful ${editData.propertyType || "property"} available for rent.`,
         location: editData.location || "Dhaka, Bangladesh",
-        propertyType: editData.type ? editData.type.toLowerCase() : "apartment",
+        propertyType: editData.propertyType ? editData.propertyType.toLowerCase() : "apartment", 
         price: numericPrice,
-        rentType: "monthly",
-        bedrooms: editData.bedrooms || "3",
-        bathrooms: editData.bathrooms || "2",
-        size: editData.size || "1250",
+        rentType: editData.rentType || "monthly",
+        bedrooms: editData.bedrooms ? String(editData.bedrooms) : "3",
+        bathrooms: editData.bathrooms ? String(editData.bathrooms) : "2",
+        size: editData.size ? String(editData.size) : "1250",
       });
+
+      if (editData.amenities && Array.from(editData.amenities).length > 0) {
+        setAmenities((prev) =>
+          prev.map((item) => ({
+            ...item,
+            selected: editData.amenities.includes(item.id),
+          }))
+        );
+      }
     }
   }, [editData]);
 
@@ -64,25 +74,27 @@ export default function EditPropertyModal({ editData, onClose, onSave }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const selectedAmenities = amenities.filter((item) => item.selected).map((item) => item.id);
+    
     const finalSubmitData = { 
-      id: editData?.id, 
+      id: editData?._id || editData?.id, // MongoDB আইডি
       ...formData, 
       amenities: selectedAmenities, 
       images,
-      status: editData?.status || "Pending" 
+      status: "Pending" 
     };
     
-    // মেইন টেবিলে ডেটা আপডেট করার কলব্যাক ফাংশন
-    onSave(finalSubmitData);
-    onClose();
+    // মেইন প্যারেন্ট ফাইলে ডেটা পাঠানো এবং সাকসেস হলে মডাল বন্ধ করা
+    if (onSave) {
+      await onSave(finalSubmitData);
+      onClose(); // 🔄 ডেটা সেভ হওয়ার পর মডাল অটোমেটিক বন্ধ হবে
+    }
   };
 
   return (
     <div className="w-full max-w-xl bg-[#040605] text-white p-6 rounded-2xl border border-zinc-900 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
-      {/* হেডার */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-xl font-bold tracking-tight text-zinc-100">Edit property details</h1>
       </div>
