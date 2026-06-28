@@ -17,5 +17,5 @@ export async function proxy(request) {
 // export default function proxy(request) { ... }
  
 export const config = {
-  matcher:[ '/allProperties/:path'],
+  matcher:[ '/home/allProperties/:path'],
 }
