@@ -9,7 +9,7 @@ export async function proxy(request) {
     })
     console.log(session);
     if (!session) {
-        return NextResponse.redirect(new URL('/login', request.url))
+        return NextResponse.redirect(new URL('/home/login', request.url))
     }
  }
  
