@@ -9,7 +9,7 @@ export default function AllBookings() {
   // কোনো ইমেইল ফিল্টার ছাড়া সরাসরি সার্ভার থেকে সব ডাটা নিয়ে আসবে
   useEffect(() => {
     setIsLoading(true);
-    fetch("http://localhost:5000/bookings")
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookings`)
       .then((res) => res.json())
       .then((data) => {
         setBookings(Array.isArray(data) ? data : []);

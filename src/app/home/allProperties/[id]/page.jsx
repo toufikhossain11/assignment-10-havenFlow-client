@@ -5,7 +5,7 @@ const PropertyDetailsPage = async ({ params }) => {
   const { id } = await params;
   console.log("Property ID from params:", id);
   
-    const res = await fetch(`http://localhost:5000/properties/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/properties/${id}`, {
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',

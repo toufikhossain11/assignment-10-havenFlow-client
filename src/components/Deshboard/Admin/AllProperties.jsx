@@ -45,7 +45,7 @@ export default function AllProperties({ properties: initialProperties }) {
   const handleApproveStatus = async (propertyId) => {
     const loadingToast = toast.loading("Updating status to Approved...");
     try {
-      const response = await fetch(`http://localhost:5000/property/status/${propertyId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/property/status/${propertyId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "Approved" }),
@@ -86,7 +86,7 @@ export default function AllProperties({ properties: initialProperties }) {
 
     const loadingToast = toast.loading("Rejecting property...");
     try {
-      const response = await fetch(`http://localhost:5000/property/status/${activePropertyId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/property/status/${activePropertyId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

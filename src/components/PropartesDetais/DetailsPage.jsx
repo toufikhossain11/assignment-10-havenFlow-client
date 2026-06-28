@@ -59,7 +59,7 @@ export default function DetailsPage({ data }) {
 
   useEffect(() => {
     if (user?.email && propertyId) {
-      fetch(`http://localhost:5000/favorites/check?email=${user.email}&propertyId=${propertyId}`)
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorites/check?email=${user.email}&propertyId=${propertyId}`)
         .then((res) => res.json())
         .then((result) => {
           if (result.isFavorite) {
@@ -94,7 +94,7 @@ export default function DetailsPage({ data }) {
       };
 
       try {
-        const response = await fetch("http://localhost:5000/favorites", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorites`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(favoriteData),
@@ -115,7 +115,7 @@ export default function DetailsPage({ data }) {
       }
     } else {
       try {
-        const response = await fetch(`http://localhost:5000/favorites/${favoriteId || propertyId}?email=${user.email}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorites/${favoriteId || propertyId}?email=${user.email}`, {
           method: "DELETE",
         });
         const result = await response.json();

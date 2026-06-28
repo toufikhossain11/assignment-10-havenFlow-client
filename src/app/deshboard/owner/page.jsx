@@ -19,7 +19,7 @@ export default function DashboardHome() {
 
   // সার্ভার থেকে ডাইনামিক স্ট্যাটস ডাটা আনা
   useEffect(() => {
-    fetch("http://localhost:5000/api/dashboard-stats")
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/dashboard-stats`)
       .then((res) => res.json())
       .then((data) => {
         setStats(data);

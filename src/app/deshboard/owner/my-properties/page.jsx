@@ -29,7 +29,7 @@ export default function MyProperties() {
     const fetchMyProperties = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:5000/my-properties?email=${user.email}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/my-properties?email=${user.email}`);
         if (response.ok) {
           const data = await response.json();
           setAllProperties(data);
@@ -80,7 +80,7 @@ export default function MyProperties() {
     const targetId = updatedFormFields.id || updatedFormFields._id || selectedProperty?._id;
 
     try {
-      const response = await fetch(`http://localhost:5000/property/update/${targetId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/property/update/${targetId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedFormFields),
@@ -117,7 +117,7 @@ export default function MyProperties() {
     if (!window.confirm("Are you sure you want to delete this property?")) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/properties/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/properties/${id}`, {
         method: "DELETE",
       });
 

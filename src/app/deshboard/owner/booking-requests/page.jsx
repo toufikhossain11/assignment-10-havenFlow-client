@@ -25,7 +25,7 @@ export default function BookingRequests() {
   // পেজ লোড হলেই সব ডাটা ফেচ করবে
   useEffect(() => {
     setIsLoading(true);
-    fetch("http://localhost:5000/bookings")
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookings`)
       .then((res) => res.json())
       .then((data) => {
         setRequests(Array.isArray(data) ? data : []);
@@ -45,7 +45,7 @@ export default function BookingRequests() {
     );
 
     try {
-      const response = await fetch(`http://localhost:5000/bookings/status/${bookingId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookings/status/${bookingId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bookingStatus }),

@@ -35,7 +35,7 @@ export default function AllUsersTable({ users: initialUsers }) {
     const loadingToast = toast.loading("Updating role...");
 
     try {
-      const response = await fetch(`http://localhost:5000/user/role/${userId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/role/${userId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -14,7 +14,7 @@ export default function FavoritesPage() {
   useEffect(() => {
     if (user?.email) {
       setLoading(true);
-      fetch(`http://localhost:5000/favorites?email=${user.email}`)
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorites?email=${user.email}`)
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch favorites");
           return res.json();
@@ -45,7 +45,7 @@ export default function FavoritesPage() {
     setFavorites(updatedFavorites);
 
     try {
-      const response = await fetch(`http://localhost:5000/favorites/${id}?email=${user.email}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/favorites/${id}?email=${user.email}`, {
         method: "DELETE",
       });
       const result = await response.json();

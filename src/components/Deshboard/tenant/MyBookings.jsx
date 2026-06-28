@@ -13,7 +13,7 @@ export default function MyBookings() {
   useEffect(() => {
     if (user?.email) {
       setLoading(true);
-      fetch(`http://localhost:5000/bookings?email=${user.email}`)
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/bookings?email=${user.email}`)
         .then((res) => res.json())
         .then((data) => {
           setBookings(data);

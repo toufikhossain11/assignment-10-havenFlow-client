@@ -9,7 +9,7 @@ export default function Transactions() {
   // সার্ভার থেকে ডাটা লোড করার ইফেক্ট
   useEffect(() => {
     setIsLoading(true);
-    fetch("http://localhost:5000/transactions")
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/transactions`)
       .then((res) => res.json())
       .then((data) => {
         setTransactions(Array.isArray(data) ? data : []);
