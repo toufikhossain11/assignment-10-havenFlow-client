@@ -149,6 +149,13 @@ export default function DetailsPage({ data }) {
     }
   ];
 
+  // Button text nirdharon korar logic
+  const getBookingButtonText = () => {
+    if (!user) return "Login to book";
+    if (user?.role?.toLowerCase() !== "tenant") return "Only Tenants can book";
+    return "Book property";
+  };
+
   return (
     <div className="w-full min-h-screen bg-[#040605] text-white p-4 md:p-6 flex justify-center items-start">
       <Toaster
@@ -251,83 +258,85 @@ export default function DetailsPage({ data }) {
                 </Button>
               </div>
 
-              {/* বুকিং মডাল — fields + submit button একই form-এ, তাই সব ভ্যালু একসাথে পোস্ট হবে */}
+              {/* বুকিং মডাল ট্রিপার বাটন */}
               <Modal>
                 <Button
                   onPress={() => {
-                    if (!user) toast.error("Please login first to book a property!");
+                    if (!user) {
+                      toast.error("Please login first to book a property!");
+                    }
                   }}
-                  isDisabled={!user}
-                  className="w-full h-14 bg-[#46cba1] hover:bg-[#3bb38e] text-zinc-950 font-black text-lg rounded-2xl transition-all shadow-xl shadow-[#46cba1]/10 disabled:opacity-50"
+                  // User login na thakle athaba user er role 'tenant' na hole button disable thakbe
+                  isDisabled={!user || user?.role?.toLowerCase() !== "tenant"}
+                  className="w-full h-14 bg-[#46cba1] hover:bg-[#3bb38e] text-zinc-950 font-black text-lg rounded-2xl transition-all shadow-xl shadow-[#46cba1]/10 disabled:opacity-40 disabled:hover:bg-[#46cba1]"
                 >
-                  {user ? "Book property" : "Login to book"}
+                  {getBookingButtonText()}
                 </Button>
 
-                <Modal.Backdrop className="bg-black/80 backdrop-blur-md">
+                <Modal.Backdrop className="bg-black/80 backdrop-blur-md overflow-y-auto py-5">
                   <Modal.Container placement="auto">
-                    <Modal.Dialog className="bg-[#0b120f] border border-zinc-900 text-white rounded-3xl max-w-md">
-                      <Modal.CloseTrigger className="hover:bg-zinc-900/50 text-zinc-500 text-xl top-5 right-5" />
+                    <Modal.Dialog className="bg-[#0b120f] border border-zinc-900 text-white rounded-3xl max-w-md w-full my-auto max-h-[85vh] overflow-y-auto">
+                      <Modal.CloseTrigger className="hover:bg-zinc-900/50 text-zinc-500 text-xl top-4 right-4" />
 
                       <form action="/api/checkout_sessions" method="POST">
-                        {/* propertyId pathano holo, kintu price/title/owner-info server e-r properties
-                            collection theke ferraw fetch korbe — client-er kono value trust kora hoy na */}
                         <input type="hidden" name="propertyId" value={propertyId || ""} />
 
-                        <Modal.Header className="p-8 pb-2 text-left">
-                          <Modal.Heading className="text-xl font-black text-zinc-100 uppercase tracking-tight">Book this property</Modal.Heading>
+                        <Modal.Header className="p-6 pb-2 text-left">
+                          <Modal.Heading className="text-lg font-black text-zinc-100 uppercase tracking-tight">Book this property</Modal.Heading>
                         </Modal.Header>
 
-                        <Modal.Body className="p-8 pt-4">
+                        <Modal.Body className="p-6 pt-3">
                           <Surface variant="default" className="bg-transparent border-0 p-0 shadow-none">
-                            <div className="flex flex-col gap-5">
+                            <div className="flex flex-col gap-4">
 
-                              <TextField className="w-full text-left" name="moveInDate" type="date" isRequired>
-                                <Label className="text-sm font-bold text-zinc-400 flex items-center gap-1.5 mb-2">
-                                  <Calendar size={14} className="text-[#46cba1]" /> Move-in date
-                                </Label>
-                                <Input required className="bg-black/50 border border-zinc-900 hover:border-zinc-800 focus-within:!border-[#46cba1]/40 rounded-xl h-12 text-zinc-200 text-sm px-4 [color-scheme:dark]" />
-                              </TextField>
+                              <div className="grid grid-cols-2 gap-3">
+                                <TextField className="w-full text-left" name="moveInDate" type="date" isRequired>
+                                  <Label className="text-sm font-bold text-zinc-400 flex items-center gap-1.5 mb-1.5">
+                                    <Calendar size={14} className="text-[#46cba1]" /> Move-in date
+                                  </Label>
+                                  <Input required className="bg-black/50 border border-zinc-900 hover:border-zinc-800 focus-within:!border-[#46cba1]/40 rounded-xl h-11 text-zinc-200 text-sm px-3 [color-scheme:dark]" />
+                                </TextField>
 
-                              <TextField className="w-full text-left" name="phone" type="tel" isRequired>
-                                <Label className="text-sm font-bold text-zinc-400 flex items-center gap-1.5 mb-2">
-                                  <Phone size={14} className="text-[#46cba1]" /> Contact number
-                                </Label>
-                                <Input required placeholder="01XXXXXXXXX" className="bg-black/50 border border-zinc-900 hover:border-zinc-800 focus-within:!border-[#46cba1]/40 rounded-xl h-12 text-zinc-200 text-sm px-4" />
-                              </TextField>
+                                <TextField className="w-full text-left" name="phone" type="tel" isRequired>
+                                  <Label className="text-sm font-bold text-zinc-400 flex items-center gap-1.5 mb-1.5">
+                                    <Phone size={14} className="text-[#46cba1]" /> Contact number
+                                  </Label>
+                                  <Input required placeholder="01XXXXXXXXX" className="bg-black/50 border border-zinc-900 hover:border-zinc-800 focus-within:!border-[#46cba1]/40 rounded-xl h-11 text-zinc-200 text-sm px-3" />
+                                </TextField>
+                              </div>
 
-                              {/* Auto-filled, read only — server-side e session theke independently newa hoy, ei display shudhu UI-r jonno */}
                               <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                  <Label className="text-sm font-bold text-zinc-400 flex items-center gap-1.5 mb-2">
+                                  <Label className="text-sm font-bold text-zinc-400 flex items-center gap-1.5 mb-1.5">
                                     <User size={14} className="text-[#46cba1]" /> Your name
                                   </Label>
-                                  <div className="bg-black/30 border border-zinc-900 rounded-xl h-12 text-zinc-400 text-sm px-4 flex items-center truncate">
+                                  <div className="bg-black/30 border border-zinc-900 rounded-xl h-11 text-zinc-400 text-sm px-3 flex items-center truncate">
                                     {user?.name || "—"}
                                   </div>
                                 </div>
                                 <div>
-                                  <Label className="text-sm font-bold text-zinc-400 flex items-center gap-1.5 mb-2">
+                                  <Label className="text-sm font-bold text-zinc-400 flex items-center gap-1.5 mb-1.5">
                                     <Mail size={14} className="text-[#46cba1]" /> Your email
                                   </Label>
-                                  <div className="bg-black/30 border border-zinc-900 rounded-xl h-12 text-zinc-400 text-sm px-4 flex items-center truncate">
+                                  <div className="bg-black/30 border border-zinc-900 rounded-xl h-11 text-zinc-400 text-sm px-3 flex items-center truncate">
                                     {user?.email || "—"}
                                   </div>
                                 </div>
                               </div>
 
                               <TextField className="w-full text-left" name="notes" slot="textarea">
-                                <Label className="text-sm font-bold text-zinc-400 flex items-center gap-1.5 mb-2">
+                                <Label className="text-sm font-bold text-zinc-400 flex items-center gap-1.5 mb-1.5">
                                   <FileText size={14} className="text-[#46cba1]" /> Additional notes
                                 </Label>
-                                <Input placeholder="Anything the owner should know..." className="bg-black/50 border border-zinc-900 rounded-xl text-zinc-200 text-sm min-h-[100px] pt-3 px-4" />
+                                <Input placeholder="Anything the owner should know..." className="bg-black/50 border border-zinc-900 rounded-xl text-zinc-200 text-sm min-h-[56px] pt-2.5 px-3" />
                               </TextField>
 
                             </div>
                           </Surface>
                         </Modal.Body>
 
-                        <Modal.Footer className="p-8 pt-2 flex gap-4">
-                          <Button slot="close" type="button" className="flex-1 h-12 bg-zinc-900 border border-zinc-800 text-zinc-400 font-bold rounded-xl">Cancel</Button>
+                        <Modal.Footer className="p-6 pt-3 flex gap-3 border-t border-zinc-900">
+                          <Button slot="close" type="button" className="flex-1 h-11 bg-zinc-900 border border-zinc-800 text-zinc-400 font-bold rounded-xl">Cancel</Button>
                           <ConfirmBookingButton />
                         </Modal.Footer>
                       </form>

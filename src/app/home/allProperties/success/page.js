@@ -97,7 +97,7 @@ export default async function PaymentSuccessPage({ searchParams }) {
 
         {/* Tomar actual tenant dashboard route diye ei href ta update kore nio */}
         <Link
-          href="/home/dashboard/tenant/myBookings"
+          href="/deshboard/tenant"
           className="inline-block w-full bg-[#46cba1] text-zinc-950 font-black text-sm py-3 rounded-xl hover:bg-[#3bb38e] transition-colors"
         >
           Go to dashboard
