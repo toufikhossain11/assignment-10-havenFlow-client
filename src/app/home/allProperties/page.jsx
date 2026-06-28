@@ -1,10 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation"; // 👈 URL কুয়েরি রিড করার জন্য ইম্পোর্ট করা হলো
 import { motion } from "framer-motion";
 import { Button } from "@heroui/react";
 import PropertiesCard from "@/components/PropertiesCard";
-
-
 
 const labelStyle = {
   fontSize: "10px",
@@ -26,22 +25,24 @@ const inputStyle = {
 };
 
 export default function AllProperties() {
+  const searchParams = useSearchParams(); // 👈 কুয়েরি প্যারামিটার হুক ইনিশিয়ালাইজ
+
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // ফিল্টার স্টেটসমূহ
-  const [location, setLocation] = useState("");
-  const [selectedType, setSelectedType] = useState("All");
+  // ব্যানার অথবা URL থেকে ডিফল্ট স্টেট ম্যানেজমেন্ট করা হচ্ছে
+  const [location, setLocation] = useState(searchParams.get("search") || "");
+  const [selectedType, setSelectedType] = useState(searchParams.get("type") || "All");
+  const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
+  const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
+  
   const [isOpen, setIsOpen] = useState(false);
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
   const propertyTypes = ["All", "Apartment", "Villa", "Studio", "Duplex"];
 
   // API থেকে ডেটা ফেচ করার ফাংশন
   const fetchProperties = async () => {
     setLoading(true);
     try {
-      // সার্চ কুয়েরি প্যারামিটার তৈরি
       const queryParams = new URLSearchParams({
         search: location,
         type: selectedType === "All" ? "" : selectedType,
@@ -59,13 +60,13 @@ export default function AllProperties() {
     }
   };
 
-  // প্রথমবার পেজ লোড হলে ডেটা আসবে
+  // প্রথমবার পেজ লোড হলে অথবা ব্যানার থেকে URL চেঞ্জ হলে কুয়েরি অনুযায়ী ট্রিগার হবে
   useEffect(() => {
     fetchProperties();
-  }, []);
+  }, [searchParams]); // 👈 searchParams ডিপেন্ডেন্সি হিসেবে যুক্ত করা হলো
 
   const handleSearch = () => {
-    fetchProperties(); // সার্চ বাটনে চাপ দিলে বা এন্টার দিলে নতুন কুয়েরিতে সার্ভার থেকে ডেটা আসবে
+    fetchProperties(); 
   };
 
   return (
@@ -94,8 +95,8 @@ export default function AllProperties() {
             padding: "20px 24px",
             border: "1px solid rgba(93,202,165,0.18)",
             width: "100%",
-            position: "relative", // 👈 ড্রপডাউনকে কার্ডের ওপরে ভাসিয়ে রাখার জন্য প্যারেন্ট পজিশন রিলেটিভ করা হলো
-            zIndex: 40,           // 👈 পুরো সার্চ বক্সের লেয়ার লেভেল বাড়িয়ে দেওয়া হলো
+            position: "relative",
+            zIndex: 40,
           }}>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "14px", alignItems: "flex-end" }}>
               
@@ -137,7 +138,7 @@ export default function AllProperties() {
                     backgroundColor: "#0a1a12",
                     border: "1px solid rgba(93,202,165,0.2)",
                     borderRadius: "10px",
-                    zIndex: 100, // 👈 z-index ১০০ করা হলো যেন ড্রপডাউনটি নিচের সব কন্টেন্ট ও কার্ডের একদম ওপরে থাকে
+                    zIndex: 100,
                     width: "100%",
                     minWidth: "150px",
                     overflow: "hidden",
