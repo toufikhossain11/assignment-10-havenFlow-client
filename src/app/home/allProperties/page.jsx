@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Button } from "@heroui/react";
 import PropertiesCard from "@/components/PropertiesCard";
 
+
+
 const labelStyle = {
   fontSize: "10px",
   fontWeight: "700",
